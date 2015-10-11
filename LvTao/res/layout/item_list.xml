@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+                android:padding="10dp">
+
+    <ImageView
+            android:id="@+id/imageVIew"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_launcher"/>
+
+    <TextView
+            android:id="@+id/name_TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/imageVIew"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:textSize="15sp"
+            android:textColor="#333333"
+            android:text="商品名称"/>
+
+    <TextView
+            android:id="@+id/newPrice_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/imageVIew"
+            android:layout_alignLeft="@id/name_TextView"
+            android:layout_below="@id/name_TextView"
+            android:layout_marginTop="15dp"
+            android:textColor="#ffdd713f"
+            android:text="¥10.00"/>
+
+    <TextView
+            android:id="@+id/degree_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/newPrice_TextView"
+            android:layout_below="@id/name_TextView"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            android:textColor="#333333"
+            android:text="新旧程度"/>
+
+    <TextView
+            android:id="@+id/available_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/degree_TextView"
+            android:layout_below="@id/name_TextView"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            android:textColor="#333333"
+            android:text="库存量:1"/>
+</RelativeLayout>
