@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -57,7 +58,7 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
     //小圆点
     private ImageView[] dots;
 
-    private int currentItem=0;
+    private boolean runTaskFlag = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,15 +99,36 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
     }
 
     //初始化数据
-    public void initData(){
-        adList=getAdList();
-        imageViews=new ArrayList<ImageView>();
+    public void initData() {
+        adList = getAdList();
+        imageViews = new ArrayList<ImageView>();
 
-        adViewPager= (ViewPager) findViewById(R.id.viewpager);
+        adViewPager = (ViewPager) findViewById(R.id.viewpager);
         adViewPager.setAdapter(new MyAdapter());
         adViewPager.setOnPageChangeListener(new MyOnPageChangeListener());
 
-        mPullScrollView= (PullToRefreshScrollView) findViewById(R.id.pullToRefresh);
+        adViewPager.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        runTaskFlag = false;
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        runTaskFlag = false;
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        runTaskFlag = true;
+                        break;
+                    default:
+                        runTaskFlag = true;
+                        break;
+                }
+                return false;
+            }
+        });
+
+        mPullScrollView = (PullToRefreshScrollView) findViewById(R.id.pullToRefresh);
         mPullScrollView.setOnRefreshListener(this);
         mScrollView = mPullScrollView.getRefreshableView();
 
@@ -119,9 +141,9 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
                     (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             params.rightMargin = 10;
             dots[i].setLayoutParams(params);
-            if(i!=0){
+            if (i != 0) {
                 dots[i].setBackgroundResource(R.drawable.welcome_dot);
-            }else {
+            } else {
                 dots[i].setBackgroundResource(R.drawable.dot_focused);
             }
             // 设置为灰色
@@ -129,8 +151,8 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
             mLinearLayout.addView(dots[i]);
 
             //异步加载图片
-            ImageView imageView=new ImageView(this);
-            mImageLoader.displayImage(adList.get(i).getImageUrl(),imageView,options);
+            ImageView imageView = new ImageView(this);
+            mImageLoader.displayImage(adList.get(i).getImageUrl(), imageView, options);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageViews.add(imageView);
         }
@@ -153,24 +175,27 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
         protected String[] doInBackground(Void... arg0) {
             try {
                 new Thread().sleep(2000);
-            }catch(Exception e){
+            } catch (Exception e) {
                 Toast.makeText(getApplication(), "刷新失败", Toast.LENGTH_SHORT).show();
             }
             return null;
         }
     }
 
-    private Handler handler=new Handler() {
-        public void handleMessage(Message msg){
-            //切换到下一张，带动画效果
-            adViewPager.setCurrentItem(currentItem, true);
+    private Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            if(runTaskFlag) {
+                int pos = adViewPager.getCurrentItem();
+                //切换到下一张，带动画效果
+                adViewPager.setCurrentItem(pos + 1, true);
+            }
         }
     };
 
-    public void initImageLoader(){
-        File cacheDir= StorageUtils.getOwnCacheDirectory(
+    public void initImageLoader() {
+        File cacheDir = StorageUtils.getOwnCacheDirectory(
                 getApplicationContext(), IMAGE_CACHE_PATH);
-        DisplayImageOptions defaultOptions=new DisplayImageOptions.Builder()
+        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.item1)//网络图片加载完成前显示的图片
                 .showImageForEmptyUri(R.drawable.item1)
                 .showImageOnFail(R.drawable.item1)
@@ -180,7 +205,7 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
                 .imageScaleType(ImageScaleType.EXACTLY)
                 .considerExifParams(true)
                 .build();
-        ImageLoaderConfiguration config=new ImageLoaderConfiguration.Builder(
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
                 this).defaultDisplayImageOptions(defaultOptions)
                 //.memoryCache(new LruMemoryCache(12 * 1024 * 1024))
                 //.memoryCacheSize(12 * 1024 * 1024)
@@ -194,14 +219,14 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
     }
 
 
-
-    private class ScrollTask implements Runnable{
+    private class ScrollTask implements Runnable {
 
         @Override
         public void run() {
-            synchronized (MainActivity.class){
-                currentItem = (currentItem + 1) % imageViews.size();
-                handler.obtainMessage().sendToTarget();
+            synchronized (MainActivity.class) {
+                if (runTaskFlag) {
+                    handler.obtainMessage().sendToTarget();
+                }
             }
         }
     }
@@ -210,7 +235,8 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
 
         @Override
         public int getCount() {
-            return adList.size();
+            //return adList.size();
+            return Integer.MAX_VALUE;
         }
 
         @Override
@@ -220,8 +246,8 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            ImageView imageView=imageViews.get(position);
-            container.addView(imageView);
+            ImageView imageView = imageViews.get(position%adList.size());
+            container.addView(imageView,0);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -233,25 +259,13 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View)object);
-        }
-
-        @Override
-        public void notifyDataSetChanged() {
-        }
-
-        @Override
-        public void finishUpdate(ViewGroup container) {
-        }
-
-        @Override
-        public void startUpdate(ViewGroup container) {
+            container.removeView((View) object);
         }
     }
 
-    private class MyOnPageChangeListener implements ViewPager.OnPageChangeListener{
+    private class MyOnPageChangeListener implements ViewPager.OnPageChangeListener {
 
-        private int oldPosition=0;
+        private int oldPosition = 0;
 
         /*
         当页面在滑动的时候会调用此方法，在滑动被停止之前，此方法回一直得到调用。其中三个参数的含义分别为：
@@ -267,15 +281,15 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
         //页面跳转完成后调用
         @Override
         public void onPageSelected(int position) {
-            /*int n=adList.size();
+            int n=adList.size();
             dots[(position+n-1)%n].setBackgroundResource(R.drawable.dot_unfocused);
             dots[(position)%n].setBackgroundResource(R.drawable.dot_focused);
-            dots[(position+1)%n].setBackgroundResource(R.drawable.dot_unfocused);*/
+            dots[(position+1)%n].setBackgroundResource(R.drawable.dot_unfocused);
 
-            currentItem=position;
+            /*currentItem = position;
             dots[oldPosition].setBackgroundResource(R.drawable.dot_unfocused);
             dots[position].setBackgroundResource(R.drawable.dot_focused);
-            oldPosition=position;
+            oldPosition = position;*/
         }
 
         //状态改变时调用
@@ -298,7 +312,7 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
     @Override
     public void onPause() {
         super.onPause();
-        if(mScheduledService != null) {
+        if (mScheduledService != null) {
             mScheduledService.shutdown();
         }
     }
@@ -307,47 +321,47 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
     protected void onStop() {
         super.onStop();
         // 当Activity不可见的时候停止切换
-        if(mScheduledService != null) {
+        if (mScheduledService != null) {
             mScheduledService.shutdown();
         }
     }
 
     //获取广告信息
-    public List<Ad> getAdList(){
-        List<Ad> list=new ArrayList<Ad>();
+    public List<Ad> getAdList() {
+        List<Ad> list = new ArrayList<Ad>();
 
-        Ad ad=new Ad();
-        ad.setImageUrl("https://ss2.bdstatic.com/lfoZeXSm1A5BphGlnYG/skin/412.jpg");
+        Ad ad = new Ad();
+        ad.setImageUrl("https://ss2.bdstatic.com/lfoZeXSm1A5BphGlnYG/skin/325.jpg");
         ad.setTargetUrl("");
         ad.setTitle("");
         list.add(ad);
 
-        Ad ad1=new Ad();
-        ad1.setImageUrl("https://ss2.bdstatic.com/lfoZeXSm1A5BphGlnYG/skin/413.jpg");
+        Ad ad1 = new Ad();
+        ad1.setImageUrl("https://ss2.bdstatic.com/lfoZeXSm1A5BphGlnYG/skin/326.jpg");
         ad1.setTargetUrl("");
         ad1.setTitle("");
         list.add(ad1);
 
-        Ad ad2=new Ad();
-        ad2.setImageUrl("https://ss2.bdstatic.com/lfoZeXSm1A5BphGlnYG/skin/414.jpg");
+        Ad ad2 = new Ad();
+        ad2.setImageUrl("https://ss2.bdstatic.com/lfoZeXSm1A5BphGlnYG/skin/327.jpg");
         ad2.setTargetUrl("");
         ad2.setTitle("");
         list.add(ad2);
 
-        Ad ad3=new Ad();
-        ad3.setImageUrl("https://ss2.bdstatic.com/lfoZeXSm1A5BphGlnYG/skin/415.jpg");
+        Ad ad3 = new Ad();
+        ad3.setImageUrl("https://ss2.bdstatic.com/lfoZeXSm1A5BphGlnYG/skin/328.jpg");
         ad3.setTargetUrl("");
         ad3.setTitle("");
         list.add(ad3);
 
-        Ad ad4=new Ad();
-        ad4.setImageUrl("https://ss2.bdstatic.com/lfoZeXSm1A5BphGlnYG/skin/416.jpg");
+        Ad ad4 = new Ad();
+        ad4.setImageUrl("https://ss2.bdstatic.com/lfoZeXSm1A5BphGlnYG/skin/329.jpg");
         ad4.setTargetUrl("");
         ad4.setTitle("");
         list.add(ad4);
 
-        Ad ad5=new Ad();
-        ad5.setImageUrl("https://ss2.bdstatic.com/lfoZeXSm1A5BphGlnYG/skin/417.jpg");
+        Ad ad5 = new Ad();
+        ad5.setImageUrl("https://ss2.bdstatic.com/lfoZeXSm1A5BphGlnYG/skin/330.jpg");
         ad5.setTargetUrl("");
         ad5.setTitle("");
         list.add(ad5);
