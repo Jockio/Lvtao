@@ -6,5 +6,5 @@
               android:background="#ffffff">
 
     <include layout="@layout/titlebar"/>
-    <include layout="@layout/banner"/>
+    <include layout="@layout/body"/>
 </LinearLayout>
