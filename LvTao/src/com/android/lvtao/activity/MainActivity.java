@@ -3,10 +3,7 @@ package com.android.lvtao.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.os.*;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
@@ -59,6 +56,8 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
     private ImageView[] dots;
 
     private boolean runTaskFlag = true;
+
+    private int previousPage=0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -152,10 +151,16 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
 
             //异步加载图片
             ImageView imageView = new ImageView(this);
+
             mImageLoader.displayImage(adList.get(i).getImageUrl(), imageView, options);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageViews.add(imageView);
         }
+
+        // 初始化广告条，当前索引Integer.MAX_VALUE的一半
+        int index = (Integer.MAX_VALUE / 2) - (Integer.MAX_VALUE / 2 % adList.size());
+        // 设置当前选中的Page，会触发onPageChangListener.onPageSelected方法
+        adViewPager.setCurrentItem(index);
     }
 
     @Override
@@ -179,6 +184,18 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
                 Toast.makeText(getApplication(), "刷新失败", Toast.LENGTH_SHORT).show();
             }
             return null;
+        }
+    }
+
+    private class ScrollTask implements Runnable {
+
+        @Override
+        public void run() {
+            synchronized (MainActivity.class) {
+                if (runTaskFlag) {
+                    handler.obtainMessage().sendToTarget();
+                }
+            }
         }
     }
 
@@ -210,7 +227,8 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
                 //.memoryCache(new LruMemoryCache(12 * 1024 * 1024))
                 //.memoryCacheSize(12 * 1024 * 1024)
                 .diskCache(new UnlimitedDiskCache(cacheDir))
-                .diskCacheSize(32 * 1024 * 1024).diskCacheFileCount(100)
+                .diskCacheSize(32 * 1024 * 1024)
+                .diskCacheFileCount(100)
                 .threadPriority(Thread.NORM_PRIORITY)
                 .tasksProcessingOrder(QueueProcessingType.LIFO)
                 .build();
@@ -218,18 +236,6 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
         ImageLoader.getInstance().init(config);
     }
 
-
-    private class ScrollTask implements Runnable {
-
-        @Override
-        public void run() {
-            synchronized (MainActivity.class) {
-                if (runTaskFlag) {
-                    handler.obtainMessage().sendToTarget();
-                }
-            }
-        }
-    }
 
     private class MyAdapter extends PagerAdapter {
 
@@ -259,7 +265,7 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View) object);
+            container.removeView(imageViews.get(position%imageViews.size()));
         }
     }
 
@@ -281,10 +287,20 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
         //页面跳转完成后调用
         @Override
         public void onPageSelected(int position) {
-            int n=adList.size();
+            /*int n=adList.size();
             dots[(position+n-1)%n].setBackgroundResource(R.drawable.dot_unfocused);
             dots[(position)%n].setBackgroundResource(R.drawable.dot_focused);
-            dots[(position+1)%n].setBackgroundResource(R.drawable.dot_unfocused);
+            dots[(position+1)%n].setBackgroundResource(R.drawable.dot_unfocused);*/
+
+            // 获取新的位置
+            int newPosition = position % adList.size();
+            // 消除上一次的状态点
+            dots[previousPage].setBackgroundResource(R.drawable.dot_unfocused);
+            // 设置当前的状态点“点”
+            dots[newPosition].setBackgroundResource(R.drawable.dot_focused);
+
+            // 记录位置
+            previousPage = newPosition;
 
             /*currentItem = position;
             dots[oldPosition].setBackgroundResource(R.drawable.dot_unfocused);
@@ -302,17 +318,15 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
     @Override
     protected void onResume() {
         super.onResume();
+        runTaskFlag=true;
         mScheduledService = Executors.newSingleThreadScheduledExecutor();
-        // 当Activity显示出来后，每两秒切换一次图片显示
-        // command：执行线程 initialDelay：初始化延时 period：两次开始执行最小间隔时间 unit：计时单位
-        mScheduledService.scheduleAtFixedRate(new ScrollTask(), 2, 3,
-                TimeUnit.SECONDS);
+        mScheduledService.scheduleWithFixedDelay(new ScrollTask(), 3, 2, TimeUnit.SECONDS);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (mScheduledService != null) {
+        if(mScheduledService != null) {
             mScheduledService.shutdown();
         }
     }
@@ -320,10 +334,20 @@ public class MainActivity extends Activity implements PullToRefreshBase.OnRefres
     @Override
     protected void onStop() {
         super.onStop();
-        // 当Activity不可见的时候停止切换
-        if (mScheduledService != null) {
+        runTaskFlag=false;
+        if(mScheduledService != null) {
             mScheduledService.shutdown();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        // activity销毁时候，关闭循环播放
+        runTaskFlag = false;
+        if(mScheduledService != null) {
+            mScheduledService.shutdown();
+        }
+        super.onDestroy();
     }
 
     //获取广告信息

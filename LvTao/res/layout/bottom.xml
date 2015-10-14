@@ -2,6 +2,102 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="wrap_content"
+              android:gravity="bottom"
+              android:layout_marginBottom="5dp">
+
+    <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal|bottom"
+            android:layout_weight="1"
+            android:orientation="vertical">
+        <Button
+                android:id="@+id/home_Button"
+                style="@style/bottom_menu_button"
+                android:background="@drawable/main_board_1_active"/>
+        <TextView
+                android:id="@+id/home_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/bottom_menu_text"
+                android:text="首页"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_weight="1"
+            android:orientation="vertical">
+        <Button
+                android:id="@+id/rent_Button"
+                style="@style/bottom_menu_button"
+                android:background="@drawable/main_board_2"/>
+        <TextView
+                android:id="@+id/rent_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/bottom_menu_text"
+                android:text="租赁服务"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+        <Button
+                android:id="@+id/main_board_center_Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/main_center_board"/>
+        <TextView
+                android:id="@+id/main_board_center_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                style="@style/bottom_menu_text"
+                android:text="绿色交易"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_weight="1"
+            android:orientation="vertical">
+        <Button
+                android:id="@+id/message_Button"
+                style="@style/bottom_menu_button"
+                android:background="@drawable/main_board_3"/>
+        <TextView
+                android:id="@+id/message_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/bottom_menu_text"
+                android:text="消息"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_weight="1"
+            android:orientation="vertical">
+        <Button
+                android:id="@+id/personal_Button"
+                style="@style/bottom_menu_button"
+                android:background="@drawable/main_board_4"/>
+        <TextView
+                android:id="@+id/personal_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/bottom_menu_text"
+                android:text="我的"/>
+    </LinearLayout>
 
 </LinearLayout>
