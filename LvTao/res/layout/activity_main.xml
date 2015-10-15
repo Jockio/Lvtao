@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+        >
+
+    <FrameLayout
+            android:id="@+id/main_content"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+
+    <RadioGroup
+            android:id="@+id/tab_menu"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#ffffff"
+            android:orientation="horizontal">
+
+        <RadioButton
+                android:id="@+id/rbHome"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:button="@null"
+                android:checked="true"
+                android:drawableTop="@drawable/tab_selector_home"
+                android:gravity="center_horizontal|bottom"
+                android:paddingTop="2dp"
+                android:text="首页"
+                android:textColor="@color/tab_selector_tv_color"/>
+
+        <RadioButton
+                android:id="@+id/rbRent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:button="@null"
+                android:drawableTop="@drawable/tab_selector_rent"
+                android:gravity="center_horizontal|bottom"
+                android:paddingTop="2dp"
+                android:text="租赁服务"
+                android:textColor="@color/tab_selector_tv_color"/>
+
+        <LinearLayout
+                android:id="@+id/more_Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+            <RadioButton
+                    android:id="@+id/rbMore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:button="@null"
+                    android:drawableTop="@drawable/main_center_board"
+                    android:gravity="center_horizontal|bottom"
+                    android:clickable="false"
+                    android:paddingTop="2dp"
+                    android:text="绿淘生活"
+                    android:textColor="#333333"/>
+        </LinearLayout>
+
+            <RadioButton
+                android:id="@+id/rbMessage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:button="@null"
+                android:drawableTop="@drawable/tab_selector_message"
+                android:gravity="center_horizontal|bottom"
+                android:paddingTop="2dp"
+                android:text="消息"
+                android:textColor="@color/tab_selector_tv_color"/>
+
+        <RadioButton
+                android:id="@+id/rbPersonal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:button="@null"
+                android:drawableTop="@drawable/tab_selector_personal"
+                android:gravity="center_horizontal|bottom"
+                android:paddingTop="2dp"
+                android:text="我的"
+                android:textColor="@color/tab_selector_tv_color"/>
+    </RadioGroup>
+
+</LinearLayout>
+

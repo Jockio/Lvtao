@@ -98,6 +98,7 @@ public class SearchActivity extends Activity {
                     Toast.makeText(getApplicationContext(),"请输入要搜索的商品",Toast.LENGTH_SHORT).show();
                     return;
                 }
+                etSearch.setSelection(etSearch.getText().length());
                 new MyTask().execute(etSearch.getText().toString().trim());
             }
         });
@@ -105,7 +106,7 @@ public class SearchActivity extends Activity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                SearchActivity.this.finish();
             }
         });
     }

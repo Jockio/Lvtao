@@ -15,7 +15,7 @@
             android:textColor="#ffffff"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:text="绿淘"/>
+            android:text="绿淘生活"/>
 
     <Button
             android:id="@+id/searchButton"
