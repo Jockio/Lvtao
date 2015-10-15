@@ -153,6 +153,7 @@ public class FragmentHome extends Fragment implements PullToRefreshBase.OnRefres
             ImageView imageView = new ImageView(getActivity().getApplicationContext());
 
             mImageLoader.displayImage(adList.get(i).getImageUrl(), imageView, options);
+            //imageView.setScaleType(ImageView.ScaleType.FIT_XY);//À­ÉìÍ¼Æ¬ÌîÂú¿Ø¼þ
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageViews.add(imageView);
         }

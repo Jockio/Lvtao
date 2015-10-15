@@ -99,6 +99,7 @@ public class SearchActivity extends Activity {
                     return;
                 }
                 etSearch.setSelection(etSearch.getText().length());
+                ivDeleteText.setVisibility(View.VISIBLE);
                 new MyTask().execute(etSearch.getText().toString().trim());
             }
         });

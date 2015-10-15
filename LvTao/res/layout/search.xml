@@ -25,7 +25,7 @@
 
         <Button
                 android:id="@+id/backButton"
-                android:layout_width="25dp"
+                android:layout_width="20dp"
                 android:layout_height="25dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
@@ -48,7 +48,6 @@
                       android:paddingLeft="32dp"
                       android:textSize="15sp"
                       android:textColor="#555555"
-                      android:text="鞋子"
                       android:hint="请输入要搜索的商品"/>
 
             <ImageView android:id="@+id/ivDeleteText"
