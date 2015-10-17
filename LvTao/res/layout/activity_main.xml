@@ -12,6 +12,11 @@
             android:layout_weight="1"/>
 
 
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#dddddd"/>
+
     <RadioGroup
             android:id="@+id/tab_menu"
             android:layout_width="fill_parent"
@@ -43,7 +48,7 @@
                 android:drawableTop="@drawable/tab_selector_rent"
                 android:gravity="center_horizontal|bottom"
                 android:paddingTop="2dp"
-                android:text="租赁服务"
+                android:text="租赁"
                 android:textColor="@color/tab_selector_tv_color"/>
 
         <LinearLayout
@@ -53,6 +58,7 @@
                 android:layout_weight="1"
                 android:gravity="center_horizontal|bottom"
                 android:orientation="horizontal">
+
             <RadioButton
                     android:id="@+id/rbMore"
                     android:layout_width="wrap_content"
@@ -63,11 +69,11 @@
                     android:gravity="center_horizontal|bottom"
                     android:clickable="false"
                     android:paddingTop="2dp"
-                    android:text="绿淘生活"
+                    android:text="绿淘交易"
                     android:textColor="#333333"/>
         </LinearLayout>
 
-            <RadioButton
+        <RadioButton
                 android:id="@+id/rbMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

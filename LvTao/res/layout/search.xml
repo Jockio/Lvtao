@@ -9,7 +9,7 @@
                     android:layout_alignParentTop="true"
                     android:paddingLeft="10dp"
                     android:layout_height="wrap_content"
-                    android:background="#b8df90">
+                    android:background="#48d1ae">
 
         <Button android:id="@+id/btnSearch"
                 android:layout_width="50dp"

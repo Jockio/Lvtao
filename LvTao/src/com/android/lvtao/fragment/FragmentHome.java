@@ -7,11 +7,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import android.view.LayoutInflater;
 import android.widget.*;
 import com.android.lvtao.R;
 import com.android.lvtao.activity.MainActivity;
 import com.android.lvtao.activity.SearchActivity;
 import com.android.lvtao.model.Ad;
+import com.android.lvtao.view.DisableScrollListview;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -32,10 +34,11 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+
+import static com.android.lvtao.R.drawable.ic_launcher;
 
 /**
  * Created by john on 2015/10/14 0014.
@@ -64,6 +67,8 @@ public class FragmentHome extends Fragment implements PullToRefreshBase.OnRefres
     private boolean runTaskFlag = true;
 
     private int previousPage = 0;
+
+    private ListView schoolListView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -163,6 +168,19 @@ public class FragmentHome extends Fragment implements PullToRefreshBase.OnRefres
         // 设置当前选中的Page，会触发onPageChangListener.onPageSelected方法
         adViewPager.setCurrentItem(index);
 
+        schoolListView= (ListView) rootView.findViewById(R.id.listView);
+        schoolListView.setAdapter(new MyListViewAdapter());
+        /*schoolListView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_MOVE:
+                        return true;
+                }
+
+                return false;
+            }
+        });*/
         return rootView;
     }
 
@@ -303,6 +321,52 @@ public class FragmentHome extends Fragment implements PullToRefreshBase.OnRefres
         }
     }
 
+    private class MyListViewAdapter extends BaseAdapter{
+
+        @Override
+        public int getCount() {
+            return 0;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder=null;
+
+            if(convertView==null){
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                convertView=inflater.inflate(R.layout.school_item_list,null);
+                holder=new ViewHolder();
+                holder.titleTextView= (TextView) convertView.findViewById(R.id.schoolTitle_TextView);
+                holder.dynamicTextView= (TextView) convertView.findViewById(R.id.schoolDynamic_TextView);
+                holder.imageView1= (ImageView) convertView.findViewById(R.id.imageView1);
+                holder.imageView2= (ImageView) convertView.findViewById(R.id.imageView2);
+                holder.imageView3= (ImageView) convertView.findViewById(R.id.imageView3);
+                convertView.setTag(holder);
+            }else{
+                holder= (ViewHolder) convertView.getTag();
+            }
+            return convertView;
+        }
+
+        public class ViewHolder{
+            TextView titleTextView;
+            TextView dynamicTextView;
+            ImageView imageView1;
+            ImageView imageView2;
+            ImageView imageView3;
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -342,7 +406,7 @@ public class FragmentHome extends Fragment implements PullToRefreshBase.OnRefres
     public List<Ad> getAdList() {
         List<Ad> list = new ArrayList<Ad>();
 
-        Ad ad = new Ad();
+        /*Ad ad = new Ad();
         ad.setImageUrl("https://ss2.bdstatic.com/lfoZeXSm1A5BphGlnYG/skin/325.jpg");
         ad.setTargetUrl("");
         ad.setTitle("");
@@ -376,7 +440,31 @@ public class FragmentHome extends Fragment implements PullToRefreshBase.OnRefres
         ad5.setImageUrl("https://ss2.bdstatic.com/lfoZeXSm1A5BphGlnYG/skin/330.jpg");
         ad5.setTargetUrl("");
         ad5.setTitle("");
-        list.add(ad5);
+        list.add(ad5);*/
+
+        Ad ad6 = new Ad();
+        ad6.setImageUrl("http://www.s2sing.com/Public/Home/Images/zlbanner.jpg");
+        ad6.setTargetUrl("http://www.s2sing.com/Goods/category/cat_id/17/school_id/all/user_id/all/is_rent/1/is_market/0/plow/-1/phigh/-1/old_degree/-1.html");
+        ad6.setTitle("");
+        list.add(ad6);
+
+        Ad ad7 = new Ad();
+        ad7.setImageUrl("http://www.s2sing.com/Public/Home/Images/index_banner2.jpg");
+        ad7.setTargetUrl("http://www.s2sing.com/Goods/category/cat_id/17.html");
+        ad7.setTitle("");
+        list.add(ad7);
+
+        Ad ad8 = new Ad();
+        ad8.setImageUrl("http://www.s2sing.com/Public/Home/Images/index_banner3.jpg");
+        ad8.setTargetUrl("");
+        ad8.setTitle("");
+        list.add(ad8);
+
+        Ad ad9 = new Ad();
+        ad9.setImageUrl("http://www.s2sing.com/Public/Home/Images/index_banner4.jpg");
+        ad9.setTargetUrl("");
+        ad9.setTitle("");
+        list.add(ad9);
 
         return list;
     }
